@@ -1,129 +1,102 @@
-// 1. Inicialización y Estado de la Aplicación
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-let currentFilter = 'all'; // all, pending, completed
+let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+let currentFilter = 'all';
 
-// Referencias al DOM (HTML)
-const form = document.getElementById('form-tarea');
-const input = document.getElementById('nueva-tarea');
-const lista = document.getElementById('lista-tareas');
-const template = document.getElementById('tarea-template').content;
-const buscador = document.getElementById('buscador');
+const $ = (id) => document.getElementById(id);
+const form = $('form-tarea');
+const input = $('nueva-tarea');
+const lista = $('lista-tareas');
+const template = $('tarea-template').content;
+const buscador = $('buscador');
+const filters = $('filters');
+const stats = {
+    all: $('stat-total'),
+    pending: $('stat-pending'),
+    completed: $('stat-completed')
+};
 
-// Referencias de Estadísticas
-const statTotal = document.getElementById('stat-total');
-const statPending = document.getElementById('stat-pending');
-const statCompleted = document.getElementById('stat-completed');
+const save = () => localStorage.setItem('tasks', JSON.stringify(tasks));
+const uid = () => `${Date.now()}`.slice(-4);
 
-// 2. Event Listeners Principales
-document.addEventListener('DOMContentLoaded', renderTasks);
+const passFilter = (task) => (
+    currentFilter === 'all' ||
+    (currentFilter === 'pending' && !task.completed) ||
+    (currentFilter === 'completed' && task.completed)
+);
+
+function render() {
+    const q = buscador.value.trim().toLowerCase();
+    const done = tasks.filter((t) => t.completed).length;
+    stats.all.textContent = tasks.length;
+    stats.pending.textContent = tasks.length - done;
+    stats.completed.textContent = done;
+    filters.querySelectorAll('.stat-card').forEach((card) => {
+        card.classList.toggle('active', card.dataset.filter === currentFilter);
+    });
+
+    lista.innerHTML = '';
+    tasks
+        .filter((t) => (t.title.toLowerCase().includes(q) || t.id.includes(q)) && passFilter(t))
+        .forEach((task) => {
+            const clone = template.cloneNode(true);
+            const li = clone.querySelector('.task-item');
+            li.dataset.id = task.id;
+            li.classList.toggle('completed', task.completed);
+            clone.querySelector('.task-id').textContent = `#${task.id}`;
+            clone.querySelector('.task-title').textContent = task.title;
+            clone.querySelector('.task-checkbox').checked = task.completed;
+            lista.appendChild(clone);
+        });
+}
+
+function commit(nextTasks) {
+    tasks = nextTasks;
+    save();
+    render();
+}
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     const title = input.value.trim();
-    if (title !== '') {
-        addTask(title);
-        input.value = '';
+    if (!title) return;
+    input.value = '';
+    commit([...tasks, { id: uid(), title, completed: false }]);
+});
+
+buscador.addEventListener('input', render);
+
+$('btn-marcar-todas').addEventListener('click', () => {
+    if (!tasks.length) return;
+    commit(tasks.map((task) => ({ ...task, completed: true })));
+});
+
+$('btn-borrar-completadas').addEventListener('click', () => {
+    commit(tasks.filter((task) => !task.completed));
+});
+
+filters.addEventListener('click', (e) => {
+    const card = e.target.closest('.stat-card');
+    if (!card) return;
+    currentFilter = card.dataset.filter || 'all';
+    render();
+});
+
+lista.addEventListener('click', (e) => {
+    const item = e.target.closest('.task-item');
+    if (!item) return;
+    const { id } = item.dataset;
+    if (e.target.closest('.btn-borrar')) {
+        commit(tasks.filter((task) => task.id !== id));
     }
 });
 
-buscador.addEventListener('input', renderTasks);
-
-// Acciones Masivas
-document.getElementById('btn-marcar-todas').addEventListener('click', () => {
-    tasks.forEach(task => task.completed = true);
-    saveAndRender();
+lista.addEventListener('change', (e) => {
+    if (!e.target.classList.contains('task-checkbox')) return;
+    const item = e.target.closest('.task-item');
+    if (!item) return;
+    const { id } = item.dataset;
+    commit(tasks.map((task) => (
+        task.id === id ? { ...task, completed: e.target.checked } : task
+    )));
 });
 
-document.getElementById('btn-borrar-completadas').addEventListener('click', () => {
-    tasks = tasks.filter(task => !task.completed);
-    saveAndRender();
-});
-
-// Filtros Laterales
-document.getElementById('filter-all').addEventListener('click', () => { currentFilter = 'all'; renderTasks(); });
-document.getElementById('filter-pending').addEventListener('click', () => { currentFilter = 'pending'; renderTasks(); });
-document.getElementById('filter-completed').addEventListener('click', () => { currentFilter = 'completed'; renderTasks(); });
-
-
-// 3. Funciones Lógicas
-
-function addTask(title) {
-    const newTask = {
-        id: Date.now().toString().slice(-4), // Genera un ID corto de 4 números
-        title: title,
-        completed: false
-    };
-    tasks.push(newTask);
-    saveAndRender();
-}
-
-function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
-    if (task) {
-        task.completed = !task.completed;
-        saveAndRender();
-    }
-}
-
-function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    saveAndRender();
-}
-
-// 4. Renderizado y Guardado (Visual y LocalStorage)
-
-function saveAndRender() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    renderTasks();
-}
-
-function updateStats() {
-    statTotal.textContent = tasks.length;
-    statPending.textContent = tasks.filter(t => !t.completed).length;
-    statCompleted.textContent = tasks.filter(t => t.completed).length;
-}
-
-function renderTasks() {
-    lista.innerHTML = ''; // Limpiamos la lista visual
-    updateStats(); // Actualizamos los números de la izquierda
-
-    const searchTerm = buscador.value.toLowerCase();
-
-    // Filtramos según la barra de búsqueda y el filtro lateral seleccionado
-    let filteredTasks = tasks.filter(task => {
-        const matchesSearch = task.title.toLowerCase().includes(searchTerm) || task.id.includes(searchTerm);
-        let matchesFilter = true;
-        
-        if (currentFilter === 'pending') matchesFilter = !task.completed;
-        if (currentFilter === 'completed') matchesFilter = task.completed;
-
-        return matchesSearch && matchesFilter;
-    });
-
-    // Clonamos el template por cada tarea
-    filteredTasks.forEach(task => {
-        const clone = template.cloneNode(true);
-        const li = clone.querySelector('li');
-        const checkbox = clone.querySelector('.task-checkbox');
-        const titleSpan = clone.querySelector('.task-title');
-        const btnBorrar = clone.querySelector('.btn-borrar');
-
-        // Llenar datos
-        clone.querySelector('.task-id').textContent = `#${task.id}`;
-        titleSpan.textContent = task.title;
-        checkbox.checked = task.completed;
-
-        // Estilos si está completada (Como pediste: Opacidad, verde, tachado)
-        if (task.completed) {
-            li.classList.add('border-green-400', 'bg-green-50');
-            titleSpan.classList.add('line-through', 'opacity-60');
-            checkbox.classList.add('text-green-500');
-        }
-
-        // Eventos de cada tarea individual
-        checkbox.addEventListener('change', () => toggleTask(task.id));
-        btnBorrar.addEventListener('click', () => deleteTask(task.id));
-
-        lista.appendChild(clone);
-    });
-}
+document.addEventListener('DOMContentLoaded', render);
