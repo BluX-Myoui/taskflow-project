@@ -1,35 +1,47 @@
-# Proyecto Taskflow #
+# TaskFlow - Gestor de Tareas Profesional
 
- Cómo funciona TaskFlow (Lógica y Diseño)
+TaskFlow es una aplicación web de gestión de tareas (Single Page Application) diseñada para ofrecer una experiencia de usuario fluida y eficiente, estructurada en un panel de control lateral y un área principal de visualización.
 
-- La idea principal de la aplicación es tenerlo todo a la vista en una sola pantalla, dividida en dos partes principales: un panel de control a la izquierda y la lista de tareas a la derecha.
+## Características Principales
 
-- Panel Lateral (Izquierda)
-Es el "cerebro" donde controlamos todo. Tiene un botón central para poder colapsar el menú si queremos ganar espacio en la pantalla.
+### Panel Lateral (Control y Estadísticas)
+- **Buscador en tiempo real:** Filtra las tareas de forma instantánea por título o identificador único (#ID).
+- **Filtros Interactivos:** Tarjetas dinámicas que muestran el conteo en tiempo real de tareas Totales, Pendientes y Completadas. Actúan como filtros visuales para la lista principal.
+- **Formulario de Ingreso:** Permite añadir nuevas tareas rápidamente mediante la tecla Enter o el botón dedicado.
 
-- Buscador: Está arriba del todo como "Buscar tarea". Permite filtrar las tareas guardadas buscando directamente por su #ID o por una palabra clave.
+### Área Principal (Gestión de Tareas)
+- **Acciones Masivas:**
+  - **A-Z:** Ordena alfabéticamente la lista actual.
+  - **Todas:** Marca todas las tareas visibles como completadas.
+  - **Deshacer:** Recupera la última tarea eliminada en su posición original.
+  - **Limpiar:** Elimina permanentemente las tareas completadas (requiere confirmación previa).
+- **Interacción por Tarea:**
+  - **Completar:** Checkbox para alternar el estado de la tarea (aplica estilos de tachado y opacidad).
+  - **Editar:** Permite modificar el título de la tarea mediante un cuadro de diálogo nativo.
+  - **Borrar:** Elimina la tarea de forma individual.
 
-- Tarjetas de Estadísticas (Filtros): Tenemos 3 botones principales: Total, Pendiente y Completadas. El número (NUM) se actualiza al instante sumando o restando según lo que hagamos. Además, son interactivos: si pulsas por ejemplo en "Pendientes", la lista de la derecha te filtra y te muestra solo "Pendientes".
+## Documentación de Funciones Principales (app.js)
 
-- Agregar Tarea: Al pulsarlo, se abre un pequeño formulario para poner un título (útil para luego buscar por palabra clave) y una descripción opcional.
-Además automaticamente se te abre una ventana de confirmacion:
-    - NUM tarea
-    - NOMBRE tarea
-    - ID tarea
-        -confirmacion-
+El núcleo de la aplicación utiliza un patrón de diseño basado en la gestión centralizada del estado, optimizado mediante la delegación de eventos en el DOM.
 
-- Zona de Tareas (Derecha)
-La lista tiene su propia barra de scroll para deslizar cómodamente.
-- Orden en cascada: Siempre que creas una tarea nueva, se coloca la "anitgua" debajo de la nueva.
+- `uid()`: Genera un identificador único de 4 caracteres basado en la marca de tiempo actual del sistema.
+- `passFilter(task)`: Evalúa si un objeto de tarea debe mostrarse en pantalla basándose en el filtro activo actual ('all', 'pending', 'completed'). Retorna un valor booleano.
+- `render()`: Función encargada de sincronizar la interfaz de usuario con el estado de los datos. Actualiza los contadores del panel lateral, gestiona las clases CSS dinámicas y reconstruye los nodos del DOM para la lista de tareas, aplicando los filtros de búsqueda y estado pertinentes.
+- `commit(nextTasks)`: Actúa como el controlador principal de mutación del estado. Recibe un nuevo array de tareas, actualiza la variable global, persiste los datos en `localStorage` y llama a `render()` para repintar la vista.
 
-- Por el momento no hay botones de "Borrar todo" o "Todas completado".
+## Ejemplos de Uso
 
-- ¿Cómo interactuamos con cada Tarea?
-Todas las tareas en la lista funcionan como botones independientes.
-De manera breve podemos ver su NUM + Nombre + #ID.
+**Escenario 1: Flujo de trabajo básico**
+1. Escribe "Revisar correo electrónico" en el formulario lateral y presiona Enter.
+2. La tarea aparece inmediatamente en el área principal con un identificador asignado.
+3. Al finalizarla, haz clic en el checkbox situado a la izquierda de la tarea. La tarjeta adoptará un tono verde, el texto se tachará y el contador lateral de "Completadas" se incrementará automáticamente.
 
-- Ampliar: Si pulsas en medio de la tarea , se despliega una ventana para poder ver el NOMBRE la DESCRIPCION y nuevamente la #ID oel NUM si este fuera muy largo, dentro de la misma podemos editar la DESCRIPCION o el NOMBRE
+**Escenario 2: Limpieza y recuperación de errores**
+1. Con varias tareas completadas acumuladas, haz clic en el botón rojo "Limpiar" en las acciones masivas.
+2. El sistema solicitará confirmación indicando el número exacto de tareas a eliminar. Al aceptar, la lista se limpiará.
+3. Si eliminas una tarea por error utilizando el botón individual de borrado (X), el botón "Deshacer" en el panel superior se habilitará. Púlsalo para restaurar la tarea eliminada a su índice original.
 
-Marcar como Completado: A la izquierda tienen un círculo interactivo. Al pulsarlo, no salen ventanas de confirmación molestas; simplemente el borde y el círculo cambian a color verde, la opacidad del texto baja a un 60% y el nombre se tacha. Si te equivocas, le das otra vez y se desmarca.
-
-Borrar: A la derecha de cada tarea tenemos los botones para borrarla definitivamente.
+**Escenario 3: Búsqueda y edición ágil**
+1. Ante una lista extensa, utiliza la barra "Buscar Tarea" introduciendo una palabra clave. La vista se actualizará en tiempo real mostrando solo las coincidencias.
+2. Localiza la tarea deseada y haz clic en el icono de edición (lápiz).
+3. Modifica el texto en la ventana emergente y acepta. El título se actualizará conservando el identificador y el estado de completado original.
