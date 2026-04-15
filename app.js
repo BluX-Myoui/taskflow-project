@@ -1,5 +1,6 @@
 let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 let currentFilter = 'all';
+let lastDeleted = null;
 
 const $ = (id) => document.getElementById(id);
 const form = $('form-tarea');
@@ -8,6 +9,7 @@ const lista = $('lista-tareas');
 const template = $('tarea-template').content;
 const buscador = $('buscador');
 const filters = $('filters');
+const btnUndo = $('btn-deshacer');
 const stats = {
     all: $('stat-total'),
     pending: $('stat-pending'),
@@ -32,6 +34,7 @@ function render() {
     filters.querySelectorAll('.stat-card').forEach((card) => {
         card.classList.toggle('active', card.dataset.filter === currentFilter);
     });
+    btnUndo.disabled = !lastDeleted;
 
     lista.innerHTML = '';
     tasks
@@ -69,7 +72,23 @@ $('btn-marcar-todas').addEventListener('click', () => {
     commit(tasks.map((task) => ({ ...task, completed: true })));
 });
 
+$('btn-ordenar-az').addEventListener('click', () => {
+    commit([...tasks].sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' })));
+});
+
+$('btn-deshacer').addEventListener('click', () => {
+    if (!lastDeleted) return;
+    const next = [...tasks];
+    next.splice(Math.min(lastDeleted.index, next.length), 0, lastDeleted.task);
+    lastDeleted = null;
+    commit(next);
+});
+
 $('btn-borrar-completadas').addEventListener('click', () => {
+    const completedCount = tasks.filter((task) => task.completed).length;
+    if (!completedCount) return;
+    if (!window.confirm(`Se borraran ${completedCount} tareas completadas. Continuar?`)) return;
+    lastDeleted = null;
     commit(tasks.filter((task) => !task.completed));
 });
 
@@ -84,7 +103,19 @@ lista.addEventListener('click', (e) => {
     const item = e.target.closest('.task-item');
     if (!item) return;
     const { id } = item.dataset;
+    if (e.target.closest('.btn-editar')) {
+        const current = tasks.find((task) => task.id === id);
+        if (!current) return;
+        const edited = window.prompt('Editar tarea:', current.title);
+        const title = edited?.trim();
+        if (!title || title === current.title) return;
+        commit(tasks.map((task) => (task.id === id ? { ...task, title } : task)));
+        return;
+    }
     if (e.target.closest('.btn-borrar')) {
+        const index = tasks.findIndex((task) => task.id === id);
+        if (index < 0) return;
+        lastDeleted = { task: tasks[index], index };
         commit(tasks.filter((task) => task.id !== id));
     }
 });
