@@ -51,8 +51,14 @@
             <div class="main-header">
                 <h2>Lista de Tareas</h2>
                 <div class="bulk-actions">
+                    <button id="btn-ordenar-az" class="btn-secondary" aria-label="Ordenar de la A a la Z">
+                        <i class="fa-solid fa-arrow-down-a-z"></i> A-Z
+                    </button>
                     <button id="btn-marcar-todas" class="btn-secondary" aria-label="Marcar todas">
                         <i class="fa-solid fa-check-double"></i> Todas
+                    </button>
+                    <button id="btn-deshacer" class="btn-secondary" aria-label="Deshacer último borrado" disabled>
+                        <i class="fa-solid fa-rotate-left"></i> Deshacer
                     </button>
                     <button id="btn-borrar-completadas" class="btn-danger" aria-label="Borrar completadas">
                         <i class="fa-solid fa-trash-can"></i> Limpiar
@@ -74,9 +80,14 @@
                     <span class="task-title">Título de la tarea</span>
                 </div>
             </div>
-            <button class="btn-borrar" aria-label="Borrar tarea">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            <div class="task-actions">
+                <button class="btn-editar" aria-label="Editar tarea">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn-borrar" aria-label="Borrar tarea">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
         </li>
     </template>
 
