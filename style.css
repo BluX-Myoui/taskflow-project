@@ -182,6 +182,10 @@ body {
 }
 
 .bulk-actions button:hover { opacity: 0.8; }
+.bulk-actions button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 .btn-secondary { background-color: #e5e7eb; color: #374151; }
 .btn-danger { background-color: #fee2e2; color: var(--danger-color); }
 
@@ -238,6 +242,13 @@ body {
     font-weight: 500;
 }
 
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-editar,
 .btn-borrar {
     background: none;
     border: none;
@@ -247,6 +258,7 @@ body {
     transition: color 0.2s;
 }
 
+.btn-editar:hover { color: var(--primary-color); }
 .btn-borrar:hover { color: var(--danger-color); }
 
 .task-item.completed {
