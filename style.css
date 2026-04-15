@@ -1,4 +1,3 @@
-/* --- Variables (Paso 4) --- */
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
@@ -15,7 +14,6 @@
     --danger-color: #ef4444;
 }
 
-/* --- Reset básico --- */
 * {
     margin: 0;
     padding: 0;
@@ -29,14 +27,12 @@ body {
     height: 100vh;
 }
 
-/* --- Layout Principal (Flexbox) --- */
 .app-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
 
-/* --- Panel Lateral --- */
 .sidebar {
     background-color: var(--card-bg);
     padding: 1.5rem;
@@ -59,7 +55,6 @@ body {
     margin-top: 0.2rem;
 }
 
-/* Buscador */
 .search-box label {
     font-weight: 600;
     font-size: 0.9rem;
@@ -79,12 +74,13 @@ body {
     color: var(--text-muted);
 }
 
-.input-wrapper input, .task-form input {
+.input-wrapper input,
+.task-form input {
     width: 100%;
     padding: 0.6rem 0.6rem 0.6rem 2.2rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    font-size: 1rem; /* Mínimo 16px para inputs */
+    font-size: 1rem;
     outline: none;
     transition: border-color 0.2s;
 }
@@ -94,11 +90,11 @@ body {
     margin-bottom: 1rem;
 }
 
-.input-wrapper input:focus, .task-form input:focus {
+.input-wrapper input:focus,
+.task-form input:focus {
     border-color: var(--primary-color);
 }
 
-/* Estadísticas */
 .stats-container {
     display: flex;
     gap: 1rem;
@@ -127,6 +123,10 @@ body {
     font-weight: bold;
     color: white;
 }
+.stat-card.active {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
 
 .stat-total { background-color: #eff6ff; border-color: #bfdbfe; }
 .stat-total h3 { color: #1e3a8a; }
@@ -140,7 +140,6 @@ body {
 .stat-completed h3 { color: var(--success-text); }
 .stat-completed span { background-color: #22c55e; }
 
-/* Botones */
 .btn-primary {
     width: 100%;
     background-color: var(--primary-color);
@@ -155,7 +154,6 @@ body {
 
 .btn-primary:hover { background-color: var(--primary-hover); }
 
-/* --- Área Principal --- */
 .main-content {
     flex: 1;
     padding: 2rem;
@@ -187,7 +185,6 @@ body {
 .btn-secondary { background-color: #e5e7eb; color: #374151; }
 .btn-danger { background-color: #fee2e2; color: var(--danger-color); }
 
-/* Lista de Tareas */
 .task-list {
     list-style: none;
     overflow-y: auto;
@@ -252,7 +249,6 @@ body {
 
 .btn-borrar:hover { color: var(--danger-color); }
 
-/* Estado Completado */
 .task-item.completed {
     background-color: var(--success-bg);
     border-color: #bbf7d0;
@@ -263,7 +259,6 @@ body {
     opacity: 0.6;
 }
 
-/* --- Responsive (Paso 5) --- */
 @media (min-width: 768px) {
     .app-container {
         flex-direction: row;
@@ -278,7 +273,5 @@ body {
         flex-direction: column;
     }
 
-    .task-form {
-        margin-top: auto; /* Empuja el formulario hacia abajo */
-    }
+    .task-form { margin-top: auto; }
 }
