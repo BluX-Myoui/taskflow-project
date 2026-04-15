@@ -1,0 +1,284 @@
+/* --- Variables (Paso 4) --- */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    
+    --success-bg: #f0fdf4;
+    --success-text: #15803d;
+    --warning-bg: #fefce8;
+    --warning-text: #a16207;
+    --danger-color: #ef4444;
+}
+
+/* --- Reset básico --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    height: 100vh;
+}
+
+/* --- Layout Principal (Flexbox) --- */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* --- Panel Lateral --- */
+.sidebar {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.sidebar-header h1 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+}
+
+.sidebar-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+/* Buscador */
+.search-box label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.input-wrapper input, .task-form input {
+    width: 100%;
+    padding: 0.6rem 0.6rem 0.6rem 2.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem; /* Mínimo 16px para inputs */
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.task-form input {
+    padding-left: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.input-wrapper input:focus, .task-form input:focus {
+    border-color: var(--primary-color);
+}
+
+/* Estadísticas */
+.stats-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card h3 { font-size: 0.9rem; }
+.stat-card span {
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.stat-total { background-color: #eff6ff; border-color: #bfdbfe; }
+.stat-total h3 { color: #1e3a8a; }
+.stat-total span { background-color: var(--primary-color); }
+
+.stat-pending { background-color: var(--warning-bg); border-color: #fef08a; }
+.stat-pending h3 { color: var(--warning-text); }
+.stat-pending span { background-color: #eab308; }
+
+.stat-completed { background-color: var(--success-bg); border-color: #bbf7d0; }
+.stat-completed h3 { color: var(--success-text); }
+.stat-completed span { background-color: #22c55e; }
+
+/* Botones */
+.btn-primary {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+/* --- Área Principal --- */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.bulk-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.bulk-actions button:hover { opacity: 0.8; }
+.btn-secondary { background-color: #e5e7eb; color: #374151; }
+.btn-danger { background-color: #fee2e2; color: var(--danger-color); }
+
+/* Lista de Tareas */
+.task-list {
+    list-style: none;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+}
+
+.task-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.task-item:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow: hidden;
+}
+
+.task-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
+.task-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-id {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.task-title {
+    font-weight: 500;
+}
+
+.btn-borrar {
+    background: none;
+    border: none;
+    color: #d1d5db;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.btn-borrar:hover { color: var(--danger-color); }
+
+/* Estado Completado */
+.task-item.completed {
+    background-color: var(--success-bg);
+    border-color: #bbf7d0;
+}
+
+.task-item.completed .task-title {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* --- Responsive (Paso 5) --- */
+@media (min-width: 768px) {
+    .app-container {
+        flex-direction: row;
+    }
+    
+    .sidebar {
+        width: 320px;
+        height: 100vh;
+    }
+
+    .stats-container {
+        flex-direction: column;
+    }
+
+    .task-form {
+        margin-top: auto; /* Empuja el formulario hacia abajo */
+    }
+}

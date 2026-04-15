@@ -1,52 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> TaskFlow1.0 </title>
+    <title>TaskFlow - Gestor de Tareas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Título y Subtitulo -->
-    <header> 
-        <h1>TaskFlow </h1>
-        <P> Gestor de Tareas </P>
-    </header>
-    <h1> Gestor de Tareas</h1>
+    <div class="app-container">
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <h1><i class="fa-solid fa-layer-group"></i> TaskFlow</h1>
+                <p>Tu gestor de tareas eficiente</p>
+            </header>
 
-    <!-- Parte izquierda -->
-    <aside>
-        <h2> Estadísticas y control </h2>
-        <label for="buscador">Buscador</label>
-        <input type="search" id="buscador">
+            <div class="search-box">
+                <label for="buscador">Buscar Tarea</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="buscador" placeholder="Palabra clave o #ID...">
+                </div>
+            </div>
 
-        <section>
-            <h3> TOTAL </h3>
-            <span> 0 </span>
-        </section>
-       
-        <section>
-            <h3> PENDIENTES </h3>
-            <span> 0 </span>
-        </section>
+            <div class="stats-container">
+                <section class="stat-card stat-total" id="filter-all">
+                    <h3>Total</h3>
+                    <span id="stat-total">0</span>
+                </section>
+                <section class="stat-card stat-pending" id="filter-pending">
+                    <h3>Pendientes</h3>
+                    <span id="stat-pending">0</span>
+                </section>
+                <section class="stat-card stat-completed" id="filter-completed">
+                    <h3>Completadas</h3>
+                    <span id="stat-completed">0</span>
+                </section>
+            </div>
 
-        <section>
-            <h3> COMPLETADAS </h3>
-            <span> 0 </span>
-        </section>
+            <form id="form-tarea" class="task-form">
+                <label for="nueva-tarea">Agregar Nueva Tarea</label>
+                <input type="text" id="nueva-tarea" required placeholder="Ej: Comprar pan...">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-plus"></i> AGREGAR
+                </button>
+            </form>
+        </aside>
 
-        <form>
-            <label for="nueva-tarea"> AGREGAR TAREA</label>
-            <input type="text" id="nueva-tarea">
-            <button type="submit">AGREGAR</button>
-        </form>
-    </aside>
+        <main class="main-content">
+            <div class="main-header">
+                <h2>Lista de Tareas</h2>
+                <div class="bulk-actions">
+                    <button id="btn-marcar-todas" class="btn-secondary" aria-label="Marcar todas">
+                        <i class="fa-solid fa-check-double"></i> Todas
+                    </button>
+                    <button id="btn-borrar-completadas" class="btn-danger" aria-label="Borrar completadas">
+                        <i class="fa-solid fa-trash-can"></i> Limpiar
+                    </button>
+                </div>
+            </div>
 
-    <!-- Parte derecha -->
+            <ul id="lista-tareas" class="task-list">
+                </ul>
+        </main>
+    </div>
 
-    <main>
-        <H2> Tareas </H2>
-        <ul> </ul>
-    </main>
+    <template id="tarea-template">
+        <li class="task-item">
+            <div class="task-info">
+                <input type="checkbox" class="task-checkbox" aria-label="Completar tarea">
+                <div class="task-text">
+                    <span class="task-id">#ID</span>
+                    <span class="task-title">Título de la tarea</span>
+                </div>
+            </div>
+            <button class="btn-borrar" aria-label="Borrar tarea">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </li>
+    </template>
 
+    <script src="app.js"></script>
 </body>
 </html>
